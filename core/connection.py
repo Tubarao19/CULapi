@@ -3,6 +3,7 @@ import mysql.connector
 #diccionario con la conexion a mysql
 mysql_config = {
     'host':'localhost',
+    'port':'33060',
     'user':'root',
     'database':'api',
     'password':'123456',

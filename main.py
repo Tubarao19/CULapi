@@ -19,7 +19,7 @@ async def get_users():
         users = cursor.fetchall()  # traer todo los registros que se pidan arriba y lo guarde en users
         return users
     except mysql.connector.Error as err: #  excepciones son errores donde se hace referencia a un alias osea err
-        raise HTTPException(status_code=500, detail="error al conectar con mysql")
+        raise HTTPException(status_code=500, detail=f"error al conectar con mysql {err}")
     finally:
         cursor.close()
 
@@ -35,5 +35,41 @@ async def create_user(user:User):
         return {"message":"usuario creado correctamente"}
     except mysql.connector.Error as err:
         raise HTTPException(status_code=400, detail=f"error al guardar el usuario {err}")
-    except ValueError as e:
-        raise 
+    except ValueError as e:  # los datos entregados de forma erronea o tipo erroneo
+        raise HTTPException(status_code=403 ,detail=f"Error dato incorrecto {e}")
+    finally:
+        cursor.close()
+
+@app.put('/user/{id}')  # se crea solo user porque se actualizara uno y se debe mandar id del usuario a actulizar
+async def create_user(user:User, id: int):# recibir el id de tipo entero
+    cursor = connection.cursor()
+    query = "UPDATE users (username, password) VALUES (%s, %s) where id = %i" # se actualizan los datos donde el id sea igual
+    values = (user.username, user.password, id)
+
+    try:
+        cursor.execute(query,values)
+        connection.commit()  #donde se empieza a guardar info en la bd
+        return {"message":"usuario actualizado correctamente"}
+    except mysql.connector.Error as err:
+        raise HTTPException(status_code=400, detail=f"error al guardar el usuario {err}")
+    except ValueError as e:  # los datos entregados de forma erronea o tipo erroneo
+        raise HTTPException(status_code=403 ,detail=f"Error dato incorrecto {e}")
+    finally:
+        cursor.close()
+
+@app.delete('/user/{id}')  # se crea solo user porque se actualizara uno y se debe mandar id del usuario a actulizar
+async def create_user(id: int):# recibir el id de tipo entero
+    cursor = connection.cursor()
+    query = "DELETE from users where id = %i" # se eliminan los datos donde el id sea igual
+    values = (id)
+
+    try:
+        cursor.execute(query,values)
+        connection.commit()  #donde se empieza a guardar info en la bd
+        return {"message":"usuario eliminado correctamente"}
+    except mysql.connector.Error as err:
+        raise HTTPException(status_code=400, detail=f"error al guardar el usuario {err}")
+    except ValueError as e:  # los datos entregados de forma erronea o tipo erroneo
+        raise HTTPException(status_code=403 ,detail=f"Error dato incorrecto {e}")
+    finally:
+        cursor.close()
