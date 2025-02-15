@@ -41,7 +41,7 @@ async def create_user(user:User):
         cursor.close()
 
 @app.put('/user/{id}')  # se crea solo user porque se actualizara uno y se debe mandar id del usuario a actulizar
-async def create_user(user:User, id: int):# recibir el id de tipo entero
+async def update_user(user:User, id: int):# recibir el id de tipo entero
     cursor = connection.cursor()
     query = "UPDATE users (username, password) VALUES (%s, %s) where id = %i" # se actualizan los datos donde el id sea igual
     values = (user.username, user.password, id)
@@ -58,7 +58,7 @@ async def create_user(user:User, id: int):# recibir el id de tipo entero
         cursor.close()
 
 @app.delete('/user/{id}')  # se crea solo user porque se actualizara uno y se debe mandar id del usuario a actulizar
-async def create_user(id: int):# recibir el id de tipo entero
+async def delete_user(id: int):# recibir el id de tipo entero
     cursor = connection.cursor()
     query = "DELETE from users where id = %i" # se eliminan los datos donde el id sea igual
     values = (id)
